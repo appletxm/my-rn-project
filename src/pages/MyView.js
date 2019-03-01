@@ -1,42 +1,62 @@
 import React, { Component } from 'react'
-import { WebView } from 'react-native'
+import { WebView, View, TouchableHighlight, Text } from 'react-native'
 
 export default class MyView extends Component {
   constructor(props) {
     super(props)
 
+    this.webview = null
     this.$onload = this.$onload.bind(this)
     this.$onloadEnd = this.$onloadEnd.bind(this)
     this.$onMessage = this.$onMessage.bind(this)
     this.$renderError = this.$renderError.bind(this)
     this.$onError = this.$onError.bind(this)
+    this.$sendPostMessage = this.$sendPostMessage.bind(this)
   }
 
   $onload() {
-    alert('web view onload')
+    console.info('web view onload')
   }
 
   $onloadEnd() {
-    alert('web view onLoadEnd')
+    console.info('web view onLoadEnd')
   }
 
-  $onMessage(arg) {
-    alert('web view onMessage:' + JSON.stringify(arg))
+  $onMessage(event) {
+    alert('app recieve:' + event.nativeEvent.data)
+    // console.info('web view onMessage:', event.nativeEvent.data)
+    let data = JSON.parse(event.nativeEvent.data)
   }
 
-  $renderError(error) {
-    alert('error:' + JSON.stringify(error))
+  $renderError(event) {
+    // console.info('error:', event)
   }
 
-  $onError(error) {
-    alert('error:' + JSON.stringify(error))
+  $onError(event) {
+    // console.info('error:', event)
+  }
+
+  $sendPostMessage() {
+    console.log('Sending post message')
+    this.webview.postMessage(JSON.stringify({'a':666, b: 555}), '*')
+  }
+
+  componentDidMount() {
+    // setTimeout(() => {
+    //   alert('will send message to browser')
+    //   this.webview.postMessage('88888')
+    // }, 6000)
   }
 
   render() {
     return (
-      <WebView
+      <View style={{flex:1}}>
+        <TouchableHighlight style={{padding: 10, backgroundColor: 'orange'}} onPress={this.$sendPostMessage}>
+          <Text style={{color: 'white'}}>Send post message from react native</Text>
+        </TouchableHighlight>
+        <WebView
         // source={{uri: 'https://github.com/facebook/react-native'}}
-        source={{uri: 'http://127.0.0.1:9000/test.html'}}
+        source={{uri: 'http://10.70.30.167:9000'}}
         style={{flex: 1}}
         userAgent="txm user agent"
         // injectedJavaScript="alert(1111); window.txm='123456'"
@@ -48,7 +68,9 @@ export default class MyView extends Component {
         startInLoadingState={true}
         domStorageEnabled={true}
         javaScriptEnabled={true}
+        ref={webview => this.webview = webview}
       />
+      </View>
     )
   }
 }
