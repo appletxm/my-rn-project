@@ -11,6 +11,7 @@ export default class Home extends Component {
     constructor(props) {
         super(props)
         // this._gotoLoginPage = this._gotoLoginPage.bind(this)
+        this.$gotoViewPage = this.$gotoViewPage.bind(this)
     }
 
     // _gotoLoginPage() {
@@ -19,6 +20,10 @@ export default class Home extends Component {
     //         otherParam: 'anything you want here',
     //     })
     // }
+
+    $gotoViewPage() {
+        this.props.navigation.navigate('MyView')
+    }
 
     render() {
         return (
@@ -38,6 +43,7 @@ export default class Home extends Component {
                 <View style={{height: 300, backgroundColor: '#f0f0f0'}}>
                     <AnimateTest></AnimateTest>
                 </View>
+                <Button title="got to view page" onPress={this.$gotoViewPage} style={{'marginTop': 10}}></Button>
             </View>
         )
     }
